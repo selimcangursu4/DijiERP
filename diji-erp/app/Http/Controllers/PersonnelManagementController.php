@@ -252,7 +252,8 @@ class PersonnelManagementController extends Controller
             "district",
             'workType',
            'contractType',
-            'bank'
+            'bank',
+            "insuranceType"
            )
             ->where("id", $id)
             ->first();
@@ -403,5 +404,30 @@ class PersonnelManagementController extends Controller
         ], 500);
        }
     }
+    // SGK Bilgilerini Güncelle
+  public function sgkUpdate(Request $request, $id)
+{
+    try {
+        $employee = Employees::findOrFail($id);
+
+        $employee->update([
+            'sgk_number' => $request->sgk_number,
+            'insurance_type_id' => $request->insurance_type_id,
+            'sgk_start_date' => $request->sgk_start_date,
+            'sgk_end_date' => $request->sgk_end_date,
+        ]);
+        return response()->json([
+            'success' => true,
+            'insurance_type_id' => $employee->insurance_type_id
+        ]);
+
+    } catch (\Throwable $th) {
+        return response()->json([
+            'success' => false,
+            'message' => $th->getMessage()
+        ], 500);
+    }
+}
+
 
 }

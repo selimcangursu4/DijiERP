@@ -124,10 +124,20 @@
 
                     </div>
                     <div class="card-body row small">
-                        <div class="col-md-6"><strong>SGK No:</strong> 458796321</div>
-                        <div class="col-md-6"><strong>Sigorta Türü:</strong> 4A</div>
-                        <div class="col-md-6"><strong>Giriş:</strong> 2021-03-10</div>
-                        <div class="col-md-6"><strong>Çıkış:</strong> —</div>
+                        <div class="col-md-6"><strong>SGK No:</strong> {{ $employee->sgk_number }}</div>
+                        <div class="col-md-6">
+                            <strong>Sigorta Türü:</strong>
+                            {{ $employee->insuranceType ? $employee->insuranceType->name : '-' }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Giriş:</strong>
+                            {{ $employee->sgk_start_date ? \Carbon\Carbon::parse($employee->sgk_start_date)->format('d-m-Y') : '-' }}
+                        </div>
+
+                        <div class="col-md-6">
+                            <strong>Çıkış:</strong>
+                            {{ $employee->sgk_end_date ? \Carbon\Carbon::parse($employee->sgk_end_date)->format('d-m-Y') : '-' }}
+                        </div>
                     </div>
                 </div>
                 <div class="card mb-3">
@@ -280,52 +290,6 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="editSgkModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">SGK Bilgileri</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body row g-3">
-
-                    <div class="col-md-6">
-                        <label>SGK No</label>
-                        <input class="form-control" value="458796321">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label>Sigorta Türü</label>
-                        <select class="form-select">
-                            <option>4A</option>
-                            <option>4B</option>
-                            <option>4C</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label>SGK Giriş Tarihi</label>
-                        <input type="date" class="form-control" value="2021-03-10">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label>SGK Çıkış Tarihi</label>
-                        <input type="date" class="form-control">
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-primary">Kaydet</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="editEmergencyModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -364,6 +328,63 @@
 
 
 
+
+
+    <div class="modal fade" id="editSgkModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form>
+                    @csrf
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title">SGK Bilgileri</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body row g-3">
+
+                        <div class="col-md-6">
+                            <label for="sgk_number" class="form-label">SGK No</label>
+                            <input type="text" name="sgk_number" id="sgk_number" class="form-control"
+                                value="{{ $employee->sgk_number }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="insurance_type_id" class="form-label">Sigorta Türü</label>
+                            <select name="insurance_type_id" id="insurance_type_id" class="form-select">
+                                <option value="">Seçiniz...</option>
+                                @foreach (\App\Models\InsuranceType::all() as $type)
+                                    <option value="{{ $type->id }}"
+                                        {{ $employee->insurance_type_id == $type->id ? 'selected' : '' }}>
+                                        {{ $type->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="sgk_start_date" class="form-label">SGK Giriş Tarihi</label>
+                            <input type="date" name="sgk_start_date" id="sgk_start_date" class="form-control"
+                                value="{{ $employee->sgk_start_date ? \Carbon\Carbon::parse($employee->sgk_start_date)->format('Y-m-d') : '' }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="sgk_end_date" class="form-label">SGK Çıkış Tarihi</label>
+                            <input type="date" name="sgk_end_date" id="sgk_end_date" class="form-control"
+                                value="{{ $employee->sgk_end_date ? \Carbon\Carbon::parse($employee->sgk_end_date)->format('Y-m-d') : '' }}">
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" id="sgkUpdateSave" class="btn btn-primary">Kaydet</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="editContactModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -836,7 +857,48 @@
                     }
                 });
             });
+            // SGK Bilgilerini Güncelle
+            $('#sgkUpdateSave').click(function(e) {
+                e.preventDefault();
 
+                let employeeId = "{{ $employee->id }}";
+                let sgk_number = $('#sgk_number').val();
+                let insurance_type_id = $('#insurance_type_id').val();
+                let sgk_start_date = $('#sgk_start_date').val();
+                let sgk_end_date = $('#sgk_end_date').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/human-resources/employee-management/sgk-update/" + employeeId,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        sgk_number: sgk_number,
+                        insurance_type_id: insurance_type_id,
+                        sgk_start_date: sgk_start_date,
+                        sgk_end_date: sgk_end_date
+                    },
+                    success: function(response) {
+                        $('#editSgkModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: 'SGK bilgileri başarıyla güncellendi.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'SGK bilgileri güncellenirken bir hata oluştu.'
+                        });
+                    }
+                });
+            });
 
 
         });

@@ -102,4 +102,8 @@ public function bank()
 {
     return $this->belongsTo(Bank::class, 'bank_id');
 }
+public function insuranceType()
+{
+    return $this->belongsTo(InsuranceType::class, 'insurance_type_id');
+}
 }
