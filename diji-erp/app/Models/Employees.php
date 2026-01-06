@@ -79,5 +79,14 @@ class Employees extends Model
 {
     return $this->belongsTo(Country::class, 'nationality_id');
 }
+public function city()
+{
+    return $this->belongsTo(City::class, 'city_id');
+}
+
+public function district()
+{
+    return $this->belongsTo(District::class, 'district_id');
+}
 
 }

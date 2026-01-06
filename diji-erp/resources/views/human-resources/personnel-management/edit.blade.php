@@ -86,15 +86,16 @@
                         <strong>İletişim Bilgileri</strong>
                         <a class="text-primary" role="button" data-bs-toggle="modal"
                             data-bs-target="#editContactModal">Düzenle</a>
-
                     </div>
                     <div class="card-body row small">
-                        <div class="col-md-6"><strong>Telefon:</strong> 0555 444 33 22</div>
-                        <div class="col-md-6"><strong>E-Posta:</strong> a.yilmaz@firma.com</div>
-                        <div class="col-md-12"><strong>Adres:</strong> Kadıköy / İstanbul</div>
-                        <div class="col-md-6"><strong>Şehir:</strong> İstanbul</div>
-                        <div class="col-md-6"><strong>İlçe:</strong> Kadıköy</div>
-                        <div class="col-md-6"><strong>Posta Kodu:</strong> 34700</div>
+                        <div class="col-md-6"><strong>Telefon:</strong> {{ $employee->phone }}</div>
+                        <div class="col-md-6"><strong>E-Posta:</strong> {{ $employee->email }}</div>
+                        <div class="col-md-12"><strong>Adres:</strong> {{ $employee->address }}</div>
+                        <div class="col-md-6"><strong>Şehir:</strong> {{ $employee->city ? $employee->city->baslik : '-' }}
+                        </div>
+                        <div class="col-md-6"><strong>İlçe:</strong>
+                            {{ $employee->district ? $employee->district->baslik : '-' }}</div>
+                        <div class="col-md-6"><strong>Posta Kodu:</strong> {{ $employee->postal_code }}</div>
                     </div>
                 </div>
                 <div class="card mb-3">
@@ -144,88 +145,13 @@
         </div>
     </div>
 
-    <div class="modal fade" id="tasksModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Görevler</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">Yeni proje analizi</li>
-                        <li class="list-group-item">Maaş hesaplama sistemi</li>
-                        <li class="list-group-item">Performans değerlendirme</li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="calendarModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Takvim</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body text-center">
-                    <i class="bi bi-calendar-event fs-1 text-success"></i>
-                    <p class="mt-3">Takvim entegrasyonu burada olacak</p>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal fade" id="diskModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Disk</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        Personel belgeleri burada listelenecek.
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="modal fade" id="editContactModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5>İletişim Bilgileri</h5><button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body row g-3">
-                    <div class="col-md-6"><label>Telefon</label><input class="form-control" value="0555 444 33 22"></div>
-                    <div class="col-md-6"><label>E-Posta</label><input class="form-control" value="a.yilmaz@firma.com">
-                    </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-primary">Kaydet</button></div>
-            </div>
-        </div>
-    </div>
 
     <div class="modal fade" id="editWorkModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
 
-                <div class="modal-header">
+                <div class="modal-header bg-light">
                     <h5 class="modal-title">Çalışma & Maaş Bilgileri</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -267,6 +193,61 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-primary">Kaydet</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="tasksModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Görevler</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">Yeni proje analizi</li>
+                        <li class="list-group-item">Maaş hesaplama sistemi</li>
+                        <li class="list-group-item">Performans değerlendirme</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="calendarModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Takvim</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <i class="bi bi-calendar-event fs-1 text-success"></i>
+                    <p class="mt-3">Takvim entegrasyonu burada olacak</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="diskModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Disk</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        Personel belgeleri burada listelenecek.
+                    </div>
                 </div>
 
             </div>
@@ -356,7 +337,80 @@
 
 
 
+    <div class="modal fade" id="editContactModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
 
+                <div class="modal-header bg-light">
+                    <h5>İletişim Bilgileri</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form id="contactUpdateForm">
+                    @csrf
+                    <div class="modal-body row g-3">
+
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">Telefon</label>
+                            <input type="text" id="phone" name="phone" class="form-control"
+                                value="{{ $employee->phone }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">E-Posta</label>
+                            <input type="email" id="email" name="email" class="form-control"
+                                value="{{ $employee->email }}">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="address" class="form-label">Adres</label>
+                            <input type="text" id="address" name="address" class="form-control"
+                                value="{{ $employee->address }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="city_id" class="form-label">Şehir</label>
+                            <select id="city_id" name="city_id" class="form-select">
+                                <option value="">Şehir Seçiniz...</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}"
+                                        {{ $employee->city_id == $city->id ? 'selected' : '' }}>
+                                        {{ $city->baslik }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="district_id" class="form-label">İlçe</label>
+                            <select id="district_id" name="district_id" class="form-select">
+                                <option value="">İlçe Seçiniz...</option>
+                                @foreach ($districts as $district)
+                                    <option value="{{ $district->id }}"
+                                        {{ $employee->district_id == $district->id ? 'selected' : '' }}>
+                                        {{ $district->baslik }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="postal_code" class="form-label">Posta Kodu</label>
+                            <input type="text" id="postal_code" name="postal_code" class="form-control"
+                                value="{{ $employee->postal_code }}">
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 
 
 
@@ -430,7 +484,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="editProfilModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -519,6 +572,32 @@
     </div>
     <script>
         $(document).ready(function() {
+            // İle Göre İlçeyi Listele
+            $('#city_id').on('change', function() {
+                let cityId = $(this).val();
+
+                $('#district_id').html('<option>Yükleniyor...</option>');
+
+                if (!cityId) {
+                    $('#district_id').html('<option>Önce şehir seçiniz</option>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/districts/' + cityId,
+                    type: 'GET',
+                    success: function(data) {
+                        let options = '<option value="">İlçe Seçiniz...</option>';
+
+                        $.each(data, function(index, district) {
+                            options +=
+                                `<option value="${district.id}">${district.baslik}</option>`;
+                        });
+
+                        $('#district_id').html(options);
+                    }
+                });
+            });
             // Profil Bilgisini Güncelle
             $('#profileUpdateSave').click(function(e) {
                 e.preventDefault();
@@ -630,6 +709,57 @@
                         });
                     }
 
+                });
+            });
+            // İletişim Bilgilerini Güncelle
+            $('#contactUpdateForm').submit(function(e) {
+                e.preventDefault();
+
+                let employeeId = "{{ $employee->id }}";
+
+                let data = {
+                    phone: $('#phone').val(),
+                    email: $('#email').val(),
+                    address: $('#address').val(),
+                    city_id: $('#city_id').val(),
+                    district_id: $('#district_id').val(),
+                    postal_code: $('#postal_code').val(),
+                    _token: '{{ csrf_token() }}'
+                };
+
+                $.ajax({
+                    url: '/human-resources/employee-management/contact-update/' + employeeId,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı',
+                                text: response.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                $('#editContactModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata',
+                                text: response.message,
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata Oluştu',
+                            text: xhr.responseJSON ? xhr.responseJSON.message :
+                                'Bir hata meydana geldi!',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
                 });
             });
 
