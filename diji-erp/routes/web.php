@@ -38,5 +38,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('employee-management.work-update');
     Route::post('/human-resources/employee-management/sgk-update/{id}', [PersonnelManagementController::class, 'sgkUpdate'])
         ->name('employee-management.sgk-update');
+    Route::post('/human-resources/employee-management/emergency-update/{id}', [PersonnelManagementController::class, 'emergencyUpdate'])
+        ->name('employee-management.emergency-update');
     
 });

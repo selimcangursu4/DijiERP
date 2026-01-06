@@ -250,11 +250,11 @@ class PersonnelManagementController extends Controller
             "employmentStatus",
             "city",
             "district",
-            'workType',
-           'contractType',
-            'bank',
+            "workType",
+            "contractType",
+            "bank",
             "insuranceType"
-           )
+        )
             ->where("id", $id)
             ->first();
         $positions = Position::where("company_id", "=", $companyId)->get();
@@ -313,7 +313,7 @@ class PersonnelManagementController extends Controller
                 "success" => true,
                 "message" => "Profil güncellendi.",
             ]);
-         } catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             Log::error("Profil güncelleme hatası: " . $th->getMessage());
             return response()->json([
                 "success" => false,
@@ -322,7 +322,7 @@ class PersonnelManagementController extends Controller
         }
     }
     // Kişisel Bilgileri Güncelleme İşlemi
-     public function personelUpdate(Request $request, $id)
+    public function personelUpdate(Request $request, $id)
     {
         try {
             $employee = Employees::findOrFail($id);
@@ -351,7 +351,7 @@ class PersonnelManagementController extends Controller
         }
     }
     // İletişim Bilgilerini Güncelle
-     public function contactUpdate(Request $request, $id)
+    public function contactUpdate(Request $request, $id)
     {
         try {
             $employee = Employees::findOrFail($id);
@@ -369,7 +369,7 @@ class PersonnelManagementController extends Controller
                 "status" => "success",
                 "message" => "İletişim bilgileri başarıyla güncellendi.",
             ]);
-         } catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             return response()->json(
                 [
                     "status" => "error",
@@ -377,57 +377,81 @@ class PersonnelManagementController extends Controller
                 ],
                 500
             );
-         }
+        }
     }
     // Çalışma ve Maaş Bilgilerini Güncelle
     public function workUpdate(Request $request, $id)
     {
-       try {
-        $employee = Employees::findOrFail($id);
+        try {
+            $employee = Employees::findOrFail($id);
 
-        $employee->work_type_id = $request->work_type_id;
-        $employee->contract_type_id = $request->contract_type_id;
-        $employee->salary_amount = $request->salary_amount;
-        $employee->bank_id = $request->bank_id;
-        $employee->iban = $request->iban;
+            $employee->work_type_id = $request->work_type_id;
+            $employee->contract_type_id = $request->contract_type_id;
+            $employee->salary_amount = $request->salary_amount;
+            $employee->bank_id = $request->bank_id;
+            $employee->iban = $request->iban;
 
-        $employee->save();
+            $employee->save();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Çalışma ve maaş bilgileri başarıyla güncellendi.'
-        ]);
-       } catch (\Throwable $th) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Bir hata oluştu: ' . $th->getMessage()
-        ], 500);
-       }
+            return response()->json([
+                "status" => "success",
+                "message" => "Çalışma ve maaş bilgileri başarıyla güncellendi.",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "status" => "error",
+                    "message" => "Bir hata oluştu: " . $th->getMessage(),
+                ],
+                500
+            );
+        }
     }
     // SGK Bilgilerini Güncelle
-  public function sgkUpdate(Request $request, $id)
-{
-    try {
+    public function sgkUpdate(Request $request, $id)
+    {
+        try {
+            $employee = Employees::findOrFail($id);
+
+            $employee->update([
+                "sgk_number" => $request->sgk_number,
+                "insurance_type_id" => $request->insurance_type_id,
+                "sgk_start_date" => $request->sgk_start_date,
+                "sgk_end_date" => $request->sgk_end_date,
+            ]);
+            return response()->json([
+                "success" => true,
+                "insurance_type_id" => $employee->insurance_type_id,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" => $th->getMessage(),
+                ],
+                500
+            );
+        }
+    }
+    // Acil Durum Kişi Bilgisini Güncelle
+    public function emergencyUpdate(Request $request, $id)
+    {
+      try {
         $employee = Employees::findOrFail($id);
 
         $employee->update([
-            'sgk_number' => $request->sgk_number,
-            'insurance_type_id' => $request->insurance_type_id,
-            'sgk_start_date' => $request->sgk_start_date,
-            'sgk_end_date' => $request->sgk_end_date,
-        ]);
-        return response()->json([
-            'success' => true,
-            'insurance_type_id' => $employee->insurance_type_id
+            'emergency_contact_name' => $request->emergency_contact_name,
+            'emergency_contact_phone' => $request->emergency_contact_phone,
+            'emergency_contact_relation' => $request->emergency_contact_relation,
         ]);
 
-    } catch (\Throwable $th) {
+        return response()->json(['success' => true]);
+
+       } catch (\Throwable $th) {
         return response()->json([
             'success' => false,
             'message' => $th->getMessage()
         ], 500);
+      }
     }
-}
-
-
 }

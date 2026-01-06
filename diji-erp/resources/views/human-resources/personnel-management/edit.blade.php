@@ -148,9 +148,9 @@
 
                     </div>
                     <div class="card-body row small">
-                        <div class="col-md-6"><strong>Kişi:</strong> Ayşe Yılmaz</div>
-                        <div class="col-md-6"><strong>Telefon:</strong> 0555 999 88 77</div>
-                        <div class="col-md-12"><strong>Yakınlık:</strong> Eş</div>
+                        <div class="col-md-6"><strong>Kişi:</strong> {{ $employee->emergency_contact_name }}</div>
+                        <div class="col-md-6"><strong>Telefon:</strong>{{ $employee->emergency_contact_phone }}</div>
+                        <div class="col-md-12"><strong>Yakınlık:</strong> {{ $employee->emergency_contact_relation }}</div>
                     </div>
                 </div>
 
@@ -290,41 +290,43 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="editEmergencyModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Acil Durum Bilgileri</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body row g-3">
-
-                    <div class="col-md-6">
-                        <label>Kişi Adı</label>
-                        <input class="form-control" value="Ayşe Yılmaz">
+                <form id="emergencyUpdateForm">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Acil Durum Bilgileri</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-
-                    <div class="col-md-6">
-                        <label>Telefon</label>
-                        <input class="form-control" value="0555 999 88 77">
+                    <div class="modal-body row g-3">
+                        <div class="col-md-6">
+                            <label for="emergency_contact_name" class="form-label">Kişi Adı</label>
+                            <input type="text" name="emergency_contact_name" id="emergency_contact_name"
+                                class="form-control" value="{{ $employee->emergency_contact_name }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="emergency_contact_phone" class="form-label">Telefon</label>
+                            <input type="text" name="emergency_contact_phone" id="emergency_contact_phone"
+                                class="form-control" value="{{ $employee->emergency_contact_phone }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label for="emergency_contact_relation" class="form-label">Yakınlık</label>
+                            <input type="text" name="emergency_contact_relation" id="emergency_contact_relation"
+                                class="form-control" value="{{ $employee->emergency_contact_relation }}">
+                        </div>
                     </div>
-
-                    <div class="col-md-12">
-                        <label>Yakınlık</label>
-                        <input class="form-control" value="Eş">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" id="emergencyUpdateSave" class="btn btn-primary">Kaydet</button>
                     </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-primary">Kaydet</button>
-                </div>
+                </form>
 
             </div>
         </div>
     </div>
+
 
 
 
@@ -899,6 +901,48 @@
                     }
                 });
             });
+            // Acil Durum Bilgilerini Güncelle
+            $('#emergencyUpdateSave').click(function(e) {
+                e.preventDefault();
+
+                let employeeId = "{{ $employee->id }}";
+                let emergency_contact_name = $('#emergency_contact_name').val();
+                let emergency_contact_phone = $('#emergency_contact_phone').val();
+                let emergency_contact_relation = $('#emergency_contact_relation').val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/human-resources/employee-management/emergency-update/" + employeeId,
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        emergency_contact_name: emergency_contact_name,
+                        emergency_contact_phone: emergency_contact_phone,
+                        emergency_contact_relation: emergency_contact_relation
+                    },
+                    success: function(response) {
+                        $('#editEmergencyModal').modal('hide');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: 'Acil durum bilgileri güncellendi.',
+                            confirmButtonText: 'Tamam'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: 'Acil durum bilgileri güncellenirken bir hata oluştu.'
+                        });
+                    }
+                });
+            });
+
 
 
         });
