@@ -203,56 +203,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="editPersonalModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header bg-light">
-                    <h5 class="modal-title">Kişisel Bilgiler</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body row g-3">
-                    <div class="col-md-6">
-                        <label>TC</label>
-                        <input type="text" class="form-control" value="12345678901" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Cinsiyet</label>
-                        <select class="form-select">
-                            <option selected>Erkek</option>
-                            <option>Kadın</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Doğum Tarihi</label>
-                        <input type="date" class="form-control" value="1992-05-12">
-                    </div>
-                    <div class="col-md-6">
-                        <label>Doğum Yeri</label>
-                        <input type="text" class="form-control" value="İstanbul">
-                    </div>
-                    <div class="col-md-6">
-                        <label>Medeni Durum</label>
-                        <select class="form-select">
-                            <option selected>Evli</option>
-                            <option>Bekar</option>
-                            <option>Dul</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Uyruk</label>
-                        <input type="text" class="form-control" value="Türkiye">
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-primary">Kaydet</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
 
     <div class="modal fade" id="editContactModal" tabindex="-1">
@@ -405,6 +355,82 @@
     </div>
 
 
+
+
+
+
+
+    <div class="modal fade" id="editPersonalModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title">Kişisel Bilgiler</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form id="personalUpdateForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="tc_identity_number" class="form-label">TC</label>
+                                <input type="text" id="tc_identity_number" class="form-control"
+                                    value="{{ $employee->tc_identity_number }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="gender" class="form-label">Cinsiyet</label>
+                                <select class="form-select" id="gender" name="gender">
+                                    <option value="Erkek" {{ $employee->gender == 'Erkek' ? 'selected' : '' }}>Erkek
+                                    </option>
+                                    <option value="Kadın" {{ $employee->gender == 'Kadın' ? 'selected' : '' }}>Kadın
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="birt_date" class="form-label">Doğum Tarihi</label>
+                                <input type="date" id="birt_date" class="form-control"
+                                    value="{{ $employee->birth_date }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="birth_place" class="form-label">Doğum Yeri</label>
+                                <input type="text" id="birth_place" class="form-control"
+                                    value="{{ $employee->birth_place }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="marital_status" class="form-label">Medeni Durum</label>
+                                <select class="form-select" id="marital_status" name="marital_status">
+                                    <option value="Evli" {{ $employee->marital_status == 'Evli' ? 'selected' : '' }}>
+                                        Evli</option>
+                                    <option value="Bekar" {{ $employee->marital_status == 'Bekar' ? 'selected' : '' }}>
+                                        Bekar</option>
+                                    <option value="Dul" {{ $employee->marital_status == 'Dul' ? 'selected' : '' }}>Dul
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="nationality_id" class="form-label">Uyruk</label>
+                                <select class="form-select" id="nationality_id" name="nationality_id">
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country->id }}"
+                                            {{ $employee->nationality_id == $country->id ? 'selected' : '' }}>
+                                            {{ $country->baslik }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" id="personalUpdateSave" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="editProfilModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -555,6 +581,58 @@
                 });
             });
             // Kişisel Bilgileri Güncelle
+            $('#personalUpdateSave').click(function(e) {
+                e.preventDefault();
+
+                let employeeId = "{{ $employee->id }}";
+                let data = {
+                    tc_identity_number: $('#tc_identity_number').val(),
+                    gender: $('#gender').val(),
+                    birt_date: $('#birt_date').val(),
+                    birth_place: $('#birth_place').val(),
+                    marital_status: $('#marital_status').val(),
+                    nationality_id: $('#nationality_id').val(),
+                    _token: '{{ csrf_token() }}'
+                };
+
+
+                $.ajax({
+                    url: '/human-resources/employee-management/personel-update/' + employeeId,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı',
+                                text: response.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                $('#editPersonalModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata',
+                                text: response.message,
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata Oluştu',
+                            text: xhr.responseJSON ? xhr.responseJSON.message :
+                                'Bir hata meydana geldi!',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+
+                });
+            });
+
 
         });
     </script>

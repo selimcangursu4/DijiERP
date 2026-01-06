@@ -253,6 +253,7 @@ class PersonnelManagementController extends Controller
         $positions = Position::where("company_id", "=", $companyId)->get();
         $employmentStatues = EmploymentStatus::all();
         $employees = Employees::where("company_id", "=", $companyId)->get();
+        $countries = Country::all();
         return view(
             "human-resources.personnel-management.edit",
             compact(
@@ -261,7 +262,8 @@ class PersonnelManagementController extends Controller
                 "departments",
                 "positions",
                 "employmentStatues",
-                "employees"
+                "employees",
+                "countries"
             )
         );
     }
@@ -298,6 +300,35 @@ class PersonnelManagementController extends Controller
                 "success" => false,
                 "message" => "Hata oluştu: " . $th->getMessage(),
             ]);
+        }
+    }
+    // Kişisel Bilgileri Güncelleme İşlemi
+    public function personelUpdate(Request $request, $id)
+    {
+        try {
+            $employee = Employees::findOrFail($id);
+
+            $employee->tc_identity_number = $request->tc_identity_number;
+            $employee->gender = $request->gender;
+            $employee->birth_date = $request->birt_date;
+            $employee->birth_place = $request->birth_place;
+            $employee->marital_status = $request->marital_status;
+            $employee->nationality_id = $request->nationality_id;
+
+            $employee->save();
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Kişisel bilgiler başarıyla güncellendi.",
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "status" => "error",
+                    "message" => "Bir hata oluştu: " . $th->getMessage(),
+                ],
+                500
+            );
         }
     }
 }
