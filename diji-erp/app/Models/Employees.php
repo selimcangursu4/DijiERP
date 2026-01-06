@@ -75,5 +75,9 @@ class Employees extends Model
     {
       return $this->belongsTo(EmploymentStatus::class, 'employment_status_id');
     }
+    public function nationality()
+{
+    return $this->belongsTo(Country::class, 'nationality_id');
+}
 
 }

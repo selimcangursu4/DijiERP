@@ -66,12 +66,19 @@
 
                     </div>
                     <div class="card-body row small">
-                        <div class="col-md-6"><strong>TC:</strong> 12345678901</div>
-                        <div class="col-md-6"><strong>Cinsiyet:</strong> Erkek</div>
-                        <div class="col-md-6"><strong>Doğum Tarihi:</strong> 1992-05-12</div>
-                        <div class="col-md-6"><strong>Doğum Yeri:</strong> İstanbul</div>
-                        <div class="col-md-6"><strong>Medeni Durum:</strong> Evli</div>
-                        <div class="col-md-6"><strong>Uyruk:</strong> Türkiye</div>
+                        <div class="col-md-6"><strong>TC:</strong> {{ $employee->tc_identity_number }}</div>
+                        <div class="col-md-6"><strong>Cinsiyet:</strong> {{ $employee->gender }}</div>
+                        <div class="col-md-6">
+                            <strong>Doğum Tarihi:</strong>
+                            {{ \Carbon\Carbon::parse($employee->birth_date)->format('d-m-Y') }}
+                        </div>
+
+                        <div class="col-md-6"><strong>Doğum Yeri:</strong> {{ $employee->birth_place }}</div>
+                        <div class="col-md-6"><strong>Medeni Durum:</strong> {{ $employee->marital_status }}</div>
+                        <div class="col-md-6">
+                            <strong>Uyruk:</strong> {{ $employee->nationality->baslik ?? '-' }}
+                        </div>
+
                     </div>
                 </div>
                 <div class="card mb-3">
@@ -200,7 +207,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
 
-                <div class="modal-header">
+                <div class="modal-header bg-light">
                     <h5 class="modal-title">Kişisel Bilgiler</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -208,12 +215,12 @@
                 <div class="modal-body row g-3">
                     <div class="col-md-6">
                         <label>TC</label>
-                        <input class="form-control" value="12345678901">
+                        <input type="text" class="form-control" value="12345678901" readonly>
                     </div>
                     <div class="col-md-6">
                         <label>Cinsiyet</label>
                         <select class="form-select">
-                            <option>Erkek</option>
+                            <option selected>Erkek</option>
                             <option>Kadın</option>
                         </select>
                     </div>
@@ -223,7 +230,19 @@
                     </div>
                     <div class="col-md-6">
                         <label>Doğum Yeri</label>
-                        <input class="form-control" value="İstanbul">
+                        <input type="text" class="form-control" value="İstanbul">
+                    </div>
+                    <div class="col-md-6">
+                        <label>Medeni Durum</label>
+                        <select class="form-select">
+                            <option selected>Evli</option>
+                            <option>Bekar</option>
+                            <option>Dul</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Uyruk</label>
+                        <input type="text" class="form-control" value="Türkiye">
                     </div>
                 </div>
 
@@ -234,6 +253,7 @@
             </div>
         </div>
     </div>
+
 
     <div class="modal fade" id="editContactModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -384,6 +404,7 @@
         </div>
     </div>
 
+
     <div class="modal fade" id="editProfilModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -463,7 +484,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
                         <button type="button" id="profileUpdateSave" class="btn btn-primary">Kaydet</button>
                     </div>
                 </form>
@@ -533,6 +554,8 @@
 
                 });
             });
+            // Kişisel Bilgileri Güncelle
+
         });
     </script>
 @endsection
