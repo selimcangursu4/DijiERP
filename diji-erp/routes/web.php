@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StaticDataController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\EmployeeDiskController;
+use App\Http\Controllers\LeaveProgramController;
 
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -46,7 +47,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/employee/{employee}/folder', [EmployeeDiskController::class, 'createFolder']);
     Route::post('/folder/{folder}/upload', [EmployeeDiskController::class, 'uploadFile']);
     Route::get('/folder/{folder}/files', [EmployeeDiskController::class, 'getFiles']);
-   Route::get('/file/download/{file}', [EmployeeDiskController::class, 'downloadFile'])
-        ->name('file.download');
+    Route::get('/file/download/{file}', [EmployeeDiskController::class, 'downloadFile'])->name('file.download');
+
+    Route::get('/human-resources/leave-program', [LeaveProgramController::class, 'index'])
+        ->name('leave-program.index');
     
 });

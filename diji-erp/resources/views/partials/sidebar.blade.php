@@ -42,7 +42,7 @@
                                  </a>
                              </li>
                              <li class="side-nav-item">
-                                 <a href="pages-faq.html" class="side-nav-link">
+                                 <a href="{{route('leave-program.index')}}" class="side-nav-link">
                                      <span class="menu-text" data-lang="pages-faq">İzin Çizelgesi</span>
                                  </a>
                              </li>

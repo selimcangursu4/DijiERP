@@ -14,29 +14,15 @@
     <div class="container-fluid">
         <div class="card mb-3">
             <div class="card-header bg-light p-0">
-
                 <ul class="nav nav-tabs nav-justified">
-
                     <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="modal" data-bs-target="#tasksModal" type="button">
-                            <i class="bi bi-list-task me-1"></i> Görevler
+                        <button class="nav-link d-flex flex-column align-items-center" data-bs-toggle="modal"
+                            data-bs-target="#diskModal" type="button">
+                            <i class="bi bi-folder2-open" style="font-size: 1rem;"></i>
+                            <span class="mt-1">Disk</span>
                         </button>
                     </li>
-
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="modal" data-bs-target="#calendarModal" type="button">
-                            <i class="bi bi-calendar-event me-1"></i> Takvim
-                        </button>
-                    </li>
-
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="modal" data-bs-target="#diskModal" type="button">
-                            <i class="bi bi-folder2-open me-1"></i> Disk
-                        </button>
-                    </li>
-
                 </ul>
-
             </div>
         </div>
         <div class="row">
@@ -49,11 +35,10 @@
 
                     </div>
                     <div class="card-body">
-                        <img src="{{ $employee->profile_photo }}" class="rounded-circle mb-3">
+                        <img src="{{ $employee->profile_photo ?? asset('assets/images/no-img.jpg') }}"
+                          style="width: 100px"  class="rounded-circle mb-3">
                         <h5>{{ $employee->first_name }} {{ $employee->last_name }}</h5>
                         <p class="text-muted">{{ $employee->position->name ?? 'Pozisyon Yok' }}</p>
-
-
                         <span class="badge bg-success">
                             {{ $employee->employmentStatus->name ?? 'Durum Yok' }}
                         </span>
@@ -160,7 +145,8 @@
                     <div class="card-body row small">
                         <div class="col-md-6"><strong>Kişi:</strong> {{ $employee->emergency_contact_name }}</div>
                         <div class="col-md-6"><strong>Telefon:</strong>{{ $employee->emergency_contact_phone }}</div>
-                        <div class="col-md-12"><strong>Yakınlık:</strong> {{ $employee->emergency_contact_relation }}</div>
+                        <div class="col-md-12"><strong>Yakınlık:</strong> {{ $employee->emergency_contact_relation }}
+                        </div>
                     </div>
                 </div>
 
@@ -168,103 +154,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="editWorkModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header bg-light">
-                    <h5 class="modal-title">Çalışma & Maaş Bilgileri</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <form id="workUpdateForm">
-                    @csrf
-                    <div class="modal-body row g-3">
-
-                        <div class="col-md-6">
-                            <label for="work_type_id" class="form-label">Çalışma Türü</label>
-                            <select id="work_type_id" name="work_type_id" class="form-select">
-                                @foreach ($workTypes as $workType)
-                                    <option value="{{ $workType->id }}"
-                                        {{ $employee->work_type_id == $workType->id ? 'selected' : '' }}>
-                                        {{ $workType->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="contract_type_id" class="form-label">Sözleşme Türü</label>
-                            <select id="contract_type_id" name="contract_type_id" class="form-select">
-                                @foreach ($contractTypes as $contractType)
-                                    <option value="{{ $contractType->id }}"
-                                        {{ $employee->contract_type_id == $contractType->id ? 'selected' : '' }}>
-                                        {{ $contractType->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="salary_amount" class="form-label">Maaş</label>
-                            <input type="text" id="salary_amount" name="salary_amount" class="form-control"
-                                value="{{ $employee->salary_amount }}">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="bank_id" class="form-label">Banka</label>
-                            <select id="bank_id" name="bank_id" class="form-select">
-                                @foreach ($banks as $bank)
-                                    <option value="{{ $bank->id }}"
-                                        {{ $employee->bank_id == $bank->id ? 'selected' : '' }}>
-                                        {{ $bank->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-12">
-                            <label for="iban" class="form-label">IBAN</label>
-                            <input type="text" id="iban" name="iban" class="form-control"
-                                value="{{ $employee->iban }}">
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
-                        <button type="button" id="workUpdateSave" class="btn btn-primary">Kaydet</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="tasksModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">Görevler</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">Yeni proje analizi</li>
-                        <li class="list-group-item">Maaş hesaplama sistemi</li>
-                        <li class="list-group-item">Performans değerlendirme</li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-    </div>
     <div class="modal fade" id="calendarModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
 
-                <div class="modal-header">
+                <div class="modal-header bg-light">
                     <h5 class="modal-title">Takvim</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -280,7 +174,7 @@
     <div class="modal fade" id="diskModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-light">
                     <h5 class="modal-title">Disk</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -1080,9 +974,6 @@
                 $('#fileView').addClass('d-none');
                 $('#folderView, #folderCreateArea').removeClass('d-none');
             });
-
-
-
         });
     </script>
 @endsection
