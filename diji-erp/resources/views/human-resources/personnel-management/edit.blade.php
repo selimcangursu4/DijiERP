@@ -1,6 +1,16 @@
 @extends('partials.master')
-
 @section('main')
+    <style>
+        .file-card:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .file-name {
+            font-size: 0.85rem;
+            word-break: break-word;
+        }
+    </style>
     <div class="container-fluid">
         <div class="card mb-3">
             <div class="card-header bg-light p-0">
@@ -158,8 +168,6 @@
         </div>
     </div>
 
-
-
     <div class="modal fade" id="editWorkModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -232,9 +240,6 @@
             </div>
         </div>
     </div>
-
-
-
     <div class="modal fade" id="tasksModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -273,24 +278,31 @@
         </div>
     </div>
     <div class="modal fade" id="diskModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-
                 <div class="modal-header">
                     <h5 class="modal-title">Disk</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
-                    <div class="alert alert-info">
-                        Personel belgeleri burada listelenecek.
+                    <div id="folderCreateArea" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" id="newFolderName" class="form-control" placeholder="Yeni klasör adı">
+                            <button class="btn btn-primary" id="createFolderBtn">Klasör Oluştur</button>
+                        </div>
+                    </div>
+
+                    <div id="folderView" class="d-flex flex-wrap gap-3">
+                    </div>
+                    <div id="fileView" class="d-none">
+                        <button class="btn btn-sm btn-secondary mb-2" id="backToFolders">← Klasörlere Geri</button>
+                        <button class="btn btn-sm btn-success mb-2" id="uploadFileBtn">Dosya Yükle</button>
+                        <div id="fileList" class="d-flex flex-wrap gap-3"></div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="editEmergencyModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -326,12 +338,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
     <div class="modal fade" id="editSgkModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -939,6 +945,140 @@
                         });
                     }
                 });
+            });
+            let employeeId = {{ $employee->id }};
+            // Disk Alanı İşlemleri
+            let currentFolderId = null;
+            // Klasörleri yükle
+            function loadFolders() {
+                $.get('/employee/' + employeeId + '/folders', function(res) {
+                    let container = $('#folderView');
+                    container.empty();
+
+                    if (res.folders.length === 0) {
+                        container.html('<p class="text-muted">Henüz klasör yok.</p>');
+                        return;
+                    }
+
+                    let row = $('<div class="d-flex flex-wrap gap-3"></div>');
+
+                    res.folders.forEach(folder => {
+                        let folderCard = $(`
+                <div class="folder-card text-center p-3 border rounded shadow-sm" style="width:120px; cursor:pointer;" data-id="${folder.id}">
+                    <i class="bi bi-folder-fill" style="font-size:50px; color:#f0ad4e;"></i>
+                    <div class="folderName mt-2 text-truncate">${folder.name}</div>
+                </div>
+                 `);
+                        row.append(folderCard);
+                    });
+
+                    container.append(row);
+                });
+            }
+            loadFolders();
+            // Klasör oluştur
+            $('#createFolderBtn').click(function() {
+                let name = $('#newFolderName').val().trim();
+                if (!name) return Swal.fire('Uyarı', 'Lütfen klasör adı girin.', 'warning');
+
+                $.post('/employee/' + employeeId + '/folder', {
+                    name: name,
+                    _token: '{{ csrf_token() }}'
+                }, function(res) {
+                    if (res.success) {
+                        Swal.fire('Başarılı', 'Klasör oluşturuldu.', 'success');
+                        loadFolders();
+                        $('#newFolderName').val('');
+                    }
+                }).fail(function() {
+                    Swal.fire('Hata', 'Klasör oluşturulamadı.', 'error');
+                });
+            });
+            // Klasörün içine gir
+            $(document).on('click', '.folder-card', function() {
+                currentFolderId = $(this).data('id');
+                $('#folderView, #folderCreateArea').addClass('d-none');
+                $('#fileView').removeClass('d-none');
+                loadFiles(currentFolderId);
+            });
+            // Dosyaları yükle
+            function loadFiles(folderId) {
+                let container = $('#fileList');
+                container.empty();
+
+                $.get('/folder/' + folderId + '/files', function(res) {
+                    if (res.files.length === 0) {
+                        container.html('<p class="text-muted">Henüz dosya yok.</p>');
+                        return;
+                    }
+
+                    let row = $('<div class="d-flex flex-wrap gap-3"></div>');
+
+                    res.files.forEach(file => {
+                        let ext = file.file_name.split('.').pop().toLowerCase();
+                        let icon = 'bi-file-earmark';
+
+                        if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) icon = 'bi-file-image';
+                        if (['pdf'].includes(ext)) icon = 'bi-file-pdf';
+                        if (['doc', 'docx'].includes(ext)) icon = 'bi-file-word';
+                        if (['xls', 'xlsx'].includes(ext)) icon = 'bi-file-excel';
+
+                        let fileCard = $(`
+                <div class="file-card text-center border rounded p-2" style="width:100px; cursor:pointer;" title="${file.file_name}">
+                    <i class="bi ${icon}" style="font-size:40px; color:#0d6efd;"></i>
+                    <div class="file-name mt-1 text-truncate">${file.file_name}</div>
+                </div>
+                `);
+
+                        // Dosyayı indir
+                        fileCard.on('click', function() {
+                            window.location.href = '/file/download/' + file.id;
+                        });
+
+                        row.append(fileCard);
+                    });
+
+                    container.append(row);
+                });
+            }
+            // Dosya yükleme
+            $(document).on('click', '#uploadFileBtn', function() {
+                if (!currentFolderId) return Swal.fire('Uyarı', 'Önce klasör seçin.', 'warning');
+
+                let fileInput = $('<input type="file" class="d-none">');
+                $('body').append(fileInput);
+                fileInput.click();
+
+                fileInput.on('change', function() {
+                    if (!fileInput[0].files.length) return;
+
+                    let formData = new FormData();
+                    formData.append('file', fileInput[0].files[0]);
+                    formData.append('_token', '{{ csrf_token() }}');
+
+                    $.ajax({
+                        url: '/folder/' + currentFolderId + '/upload',
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function(res) {
+                            Swal.fire('Başarılı', 'Dosya yüklendi.', 'success');
+                            loadFiles(currentFolderId);
+                            fileInput.remove();
+                        },
+                        error: function() {
+                            Swal.fire('Hata', 'Dosya yüklenemedi.', 'error');
+                            fileInput.remove();
+                        }
+                    });
+                });
+            });
+            // Klasör view'a geri dön
+            $('#backToFolders').click(function() {
+                currentFolderId = null;
+                $('#fileView').addClass('d-none');
+                $('#folderView, #folderCreateArea').removeClass('d-none');
             });
 
 

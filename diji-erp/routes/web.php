@@ -6,6 +6,7 @@ use App\Http\Controllers\PersonnelManagementController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\StaticDataController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\EmployeeDiskController;
 
 
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
@@ -40,5 +41,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('employee-management.sgk-update');
     Route::post('/human-resources/employee-management/emergency-update/{id}', [PersonnelManagementController::class, 'emergencyUpdate'])
         ->name('employee-management.emergency-update');
+
+    Route::get('/employee/{employee}/folders', [EmployeeDiskController::class, 'getFolders']);
+    Route::post('/employee/{employee}/folder', [EmployeeDiskController::class, 'createFolder']);
+    Route::post('/folder/{folder}/upload', [EmployeeDiskController::class, 'uploadFile']);
+    Route::get('/folder/{folder}/files', [EmployeeDiskController::class, 'getFiles']);
+   Route::get('/file/download/{file}', [EmployeeDiskController::class, 'downloadFile'])
+        ->name('file.download');
     
 });
