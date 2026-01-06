@@ -10,7 +10,8 @@
                 <h5 class="card-title">Yeni Personel Ekleme Formu</h5>
             </div>
             <div class="card-body">
-                <form action="#" method="POST">
+                <form>
+                    @csrf
                     <div class="row g-3">
                         <div class="col-12">
                             <h6 class="text-muted">Personel Bilgileri</h6>
@@ -56,8 +57,8 @@
                             <label for="nationality" class="form-label">Uyruk</label>
                             <select id="nationality" name="nationality" class="form-select">
                                 <option value="">Uyruk Seçiniz...</option>
-                                @foreach($countries as $country)
-                                   <option value="{{$country->id}}">{{$country->baslik}}</option>
+                                @foreach ($countries as $country)
+                                    <option value="{{ $country->id }}">{{ $country->baslik }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -78,23 +79,22 @@
                             <input type="email" id="email" name="email" class="form-control">
                         </div>
                         <div class="col-md-4">
-                            <label for="city_id" class="form-label">Şehir Bilgisi</label>
-                            <select id="city_id" name="city_id" class="form-select">
+                            <label class="form-label">Şehir Bilgisi</label>
+                            <select id="city_id" class="form-select">
                                 <option value="">Şehir Seçiniz...</option>
-                                 @foreach($cities as $city)
-                                   <option value="{{$city->id}}">{{$city->baslik}}</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}">{{ $city->baslik }}</option>
                                 @endforeach
                             </select>
                         </div>
+
                         <div class="col-md-4">
-                            <label for="district_id" class="form-label">İlçe Bilgisi</label>
-                            <select id="district_id" name="district_id" class="form-select">
-                                <option value="">İlçe Seçiniz...</option>
-                                 @foreach($districts as $district)
-                                   <option value="{{$district->id}}">{{$district->baslik}}</option>
-                                @endforeach
+                            <label class="form-label">İlçe Bilgisi</label>
+                            <select id="district_id" class="form-select">
+                                <option value="">Önce şehir seçiniz</option>
                             </select>
                         </div>
+
                         <div class="col-md-4">
                             <label for="postal_code" class="form-label">Posta Kodu</label>
                             <input type="text" id="postal_code" name="postal_code" class="form-control">
@@ -111,8 +111,8 @@
                             <label for="education_level_id" class="form-label">Mezuniyet Tipi</label>
                             <select id="education_level_id" name="education_level_id" class="form-select">
                                 <option value="">Mezuniyet Tipi Seçiniz...</option>
-                                @foreach($educationLevels as $educationLevel)
-                                   <option value="{{$educationLevel->id}}">{{$educationLevel->name}}</option>
+                                @foreach ($educationLevels as $educationLevel)
+                                    <option value="{{ $educationLevel->id }}">{{ $educationLevel->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -128,8 +128,8 @@
                             <label for="profession_id" class="form-label">Meslek Bilgisi</label>
                             <select id="profession_id" name="profession_id" class="form-select">
                                 <option value="">Meslek Seçiniz...</option>
-                                @foreach($professions as $profession)
-                                <option value="{{$profession->id}}">{{$profession->name}}</option>
+                                @foreach ($professions as $profession)
+                                    <option value="{{ $profession->id }}">{{ $profession->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -228,17 +228,10 @@
                             <input type="text" id="sgk_registration_number" name="sgk_registration_number"
                                 class="form-control">
                         </div>
-
                         <div class="col-md-4">
                             <label for="sgk_entry_date" class="form-label">SGK Giriş Tarihi</label>
                             <input type="date" id="sgk_entry_date" name="sgk_entry_date" class="form-control">
                         </div>
-
-                        <div class="col-md-4">
-                            <label for="sgk_exit_date" class="form-label">SGK Çıkış Tarihi</label>
-                            <input type="date" id="sgk_exit_date" name="sgk_exit_date" class="form-control">
-                        </div>
-
                         <div class="col-md-4">
                             <label for="insurance_type_id" class="form-label">SGK Tipi</label>
                             <select id="insurance_type_id" name="insurance_type_id" class="form-select">
@@ -274,7 +267,7 @@
                         </div>
 
                         <div class="col-12 text-end mt-4">
-                            <button type="submit" class="btn btn-primary" id="employee_form_submit">
+                            <button type="button" class="btn btn-primary" id="employee_form_save">
                                 Kaydet
                             </button>
                         </div>
@@ -284,4 +277,92 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            // İle Göre İlçeyi Listele
+            $('#city_id').on('change', function() {
+                let cityId = $(this).val();
+
+                $('#district_id').html('<option>Yükleniyor...</option>');
+
+                if (!cityId) {
+                    $('#district_id').html('<option>Önce şehir seçiniz</option>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/districts/' + cityId,
+                    type: 'GET',
+                    success: function(data) {
+                        let options = '<option value="">İlçe Seçiniz...</option>';
+
+                        $.each(data, function(index, district) {
+                            options +=
+                                `<option value="${district.id}">${district.baslik}</option>`;
+                        });
+
+                        $('#district_id').html(options);
+                    }
+                });
+            });
+            // Yeni Personel Ekle
+            $('#employee_form_save').click(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('employee-management.store') }}",
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        first_name: $('#first_name').val(),
+                        last_name: $('#last_name').val(),
+                        tc_identity_number: $('#tc_identity_number').val(),
+                        gender: $('#gender').val(),
+                        birth_date: $('#birth_date').val(),
+                        birth_place: $('#birth_place').val(),
+                        marital_status: $('#marital_status').val(),
+                        nationality: $('#nationality').val(),
+                        phone: $('#phone').val(),
+                        phone_secondary: $('#phone_secondary').val(),
+                        email: $('#email').val(),
+                        city_id: $('#city_id').val(),
+                        district_id: $('#district_id').val(),
+                        postal_code: $('#postal_code').val(),
+                        address: $('#address').val(),
+                        education_level_id: $('#education_level_id').val(),
+                        last_school_id: $('#last_school_id').val(),
+                        graduation_date: $('#graduation_date').val(),
+                        profession_id: $('#profession_id').val(),
+                        department_id: $('#department_id').val(),
+                        position_id: $('#position_id').val(),
+                        employment_type_id: $('#employment_type_id').val(),
+                        work_type_id: $('#work_type_id').val(),
+                        contract_type_id: $('#contract_type_id').val(),
+                        salary: $('#salary').val(),
+                        salary_currency: $('#salary_currency').val(),
+                        bank_id: $('#bank_id').val(),
+                        iban: $('#iban').val(),
+                        sgk_registration_number: $('#sgk_registration_number').val(),
+                        sgk_entry_date: $('#sgk_entry_date').val(),
+                        sgk_exit_date: $('#sgk_exit_date').val(),
+                        insurance_type_id: $('#insurance_type_id').val(),
+                        emergency_contact_name: $('#emergency_contact_name').val(),
+                        emergency_contact_phone: $('#emergency_contact_phone').val(),
+                        emergency_contact_relation: $('#emergency_contact_relation').val()
+                    },
+
+                    success: function(response) {
+                        console.log(response);
+                        alert('Personel başarıyla kaydedildi');
+                    },
+
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        alert('Bir hata oluştu');
+                    }
+                });
+
+            });
+
+        });
+    </script>
 @endsection

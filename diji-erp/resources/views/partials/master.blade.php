@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>DijiERP | İşinizi Dijitalleştirin</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Selimcan Gürsu | Full Stack Web Developer" />
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
