@@ -88,5 +88,18 @@ public function district()
 {
     return $this->belongsTo(District::class, 'district_id');
 }
+public function workType()
+{
+    return $this->belongsTo(WorkType::class, 'work_type_id');
+}
 
+public function contractType()
+{
+    return $this->belongsTo(ContractType::class, 'contract_type_id');
+}
+
+public function bank()
+{
+    return $this->belongsTo(Bank::class, 'bank_id');
+}
 }

@@ -34,5 +34,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('employee-management.personel-update');
     Route::post('/human-resources/employee-management/contact-update/{id}', [PersonnelManagementController::class, 'contactUpdate'])
         ->name('employee-management.contact-update');
+    Route::post('/human-resources/employee-management/work-update/{id}', [PersonnelManagementController::class, 'workUpdate'])
+        ->name('employee-management.work-update');
     
 });

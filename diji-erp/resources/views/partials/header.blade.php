@@ -118,7 +118,7 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <div class="dropdown-header noti-title">
-                                    <h6 class="text-overflow m-0">Welcome back!</h6>
+                                    <h6 class="text-overflow m-0">Hoşgeldin!</h6>
                                 </div>
                                 <a href="#!" class="dropdown-item">
                                     <i class="ri ri-user-line me-1 fs-lg align-middle"></i>
@@ -127,6 +127,10 @@
                                 <a href="javascript:void(0);" class="dropdown-item">
                                     <i class="ri ri-notification-3-line me-1 fs-lg align-middle"></i>
                                     <span class="align-middle">Bildirimler</span>
+                                </a>
+                                       <a href="javascript:void(0);" class="dropdown-item">
+                                    <i class="ri ri-notification-3-line me-1 fs-lg align-middle"></i>
+                                    <span class="align-middle">Taleplerim</span>
                                 </a>
                                 <a href="javascript:void(0);" class="dropdown-item">
                                     <i class="ri ri-customer-service-line me-1 fs-lg align-middle"></i>

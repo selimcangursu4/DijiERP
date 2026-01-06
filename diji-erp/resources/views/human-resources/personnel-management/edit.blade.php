@@ -103,14 +103,17 @@
                         <strong>Çalışma & Maaş</strong>
                         <a class="text-primary" role="button" data-bs-toggle="modal"
                             data-bs-target="#editWorkModal">Düzenle</a>
-
                     </div>
                     <div class="card-body row small">
-                        <div class="col-md-6"><strong>Çalışma Türü:</strong> Tam Zamanlı</div>
-                        <div class="col-md-6"><strong>Sözleşme:</strong> Süresiz</div>
-                        <div class="col-md-6"><strong>Maaş:</strong> 35.000 TL</div>
-                        <div class="col-md-6"><strong>Banka:</strong> Ziraat</div>
-                        <div class="col-md-12"><strong>IBAN:</strong> TR12 0001 0002 0003 0004</div>
+                        <div class="col-md-6"><strong>Çalışma Türü:</strong>
+                            {{ $employee->workType ? $employee->workType->name : '-' }}</div>
+                        <div class="col-md-6"><strong>Sözleşme:</strong>
+                            {{ $employee->contractType ? $employee->contractType->name : '-' }}</div>
+                        <div class="col-md-6"><strong>Maaş:</strong> {{ $employee->salary_amount }}</div>
+                        <div class="col-md-6"><strong>Banka:</strong> {{ $employee->bank ? $employee->bank->name : '-' }}
+                        </div>
+                        <div class="col-md-12"><strong>IBAN:</strong> {{ $employee->iban }}</div>
+
                     </div>
                 </div>
                 <div class="card mb-3">
@@ -153,51 +156,75 @@
 
                 <div class="modal-header bg-light">
                     <h5 class="modal-title">Çalışma & Maaş Bilgileri</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body row g-3">
+                <form id="workUpdateForm">
+                    @csrf
+                    <div class="modal-body row g-3">
 
-                    <div class="col-md-6">
-                        <label>Çalışma Türü</label>
-                        <select class="form-select">
-                            <option>Tam Zamanlı</option>
-                            <option>Yarı Zamanlı</option>
-                        </select>
+                        <div class="col-md-6">
+                            <label for="work_type_id" class="form-label">Çalışma Türü</label>
+                            <select id="work_type_id" name="work_type_id" class="form-select">
+                                @foreach ($workTypes as $workType)
+                                    <option value="{{ $workType->id }}"
+                                        {{ $employee->work_type_id == $workType->id ? 'selected' : '' }}>
+                                        {{ $workType->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="contract_type_id" class="form-label">Sözleşme Türü</label>
+                            <select id="contract_type_id" name="contract_type_id" class="form-select">
+                                @foreach ($contractTypes as $contractType)
+                                    <option value="{{ $contractType->id }}"
+                                        {{ $employee->contract_type_id == $contractType->id ? 'selected' : '' }}>
+                                        {{ $contractType->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="salary_amount" class="form-label">Maaş</label>
+                            <input type="text" id="salary_amount" name="salary_amount" class="form-control"
+                                value="{{ $employee->salary_amount }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="bank_id" class="form-label">Banka</label>
+                            <select id="bank_id" name="bank_id" class="form-select">
+                                @foreach ($banks as $bank)
+                                    <option value="{{ $bank->id }}"
+                                        {{ $employee->bank_id == $bank->id ? 'selected' : '' }}>
+                                        {{ $bank->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="iban" class="form-label">IBAN</label>
+                            <input type="text" id="iban" name="iban" class="form-control"
+                                value="{{ $employee->iban }}">
+                        </div>
+
                     </div>
 
-                    <div class="col-md-6">
-                        <label>Sözleşme Türü</label>
-                        <select class="form-select">
-                            <option>Süresiz</option>
-                            <option>Süreli</option>
-                        </select>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" id="workUpdateSave" class="btn btn-primary">Kaydet</button>
                     </div>
-
-                    <div class="col-md-6">
-                        <label>Maaş</label>
-                        <input class="form-control" value="35000">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label>Banka</label>
-                        <input class="form-control" value="Ziraat">
-                    </div>
-
-                    <div class="col-md-12">
-                        <label>IBAN</label>
-                        <input class="form-control" value="TR12 0001 0002 0003 0004">
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button class="btn btn-primary">Kaydet</button>
-                </div>
+                </form>
 
             </div>
         </div>
     </div>
+
+
+
     <div class="modal fade" id="tasksModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -411,9 +438,6 @@
             </div>
         </div>
     </div>
-
-
-
     <div class="modal fade" id="editPersonalModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -762,6 +786,57 @@
                     }
                 });
             });
+            // Çalışma ve Maaş Bilgilerini Güncelle
+            $('#workUpdateSave').click(function(e) {
+                e.preventDefault();
+
+                let employeeId = "{{ $employee->id }}";
+
+                let data = {
+                    work_type_id: $('#work_type_id').val(),
+                    contract_type_id: $('#contract_type_id').val(),
+                    salary_amount: $('#salary_amount').val(),
+                    bank_id: $('#bank_id').val(),
+                    iban: $('#iban').val(),
+                    _token: '{{ csrf_token() }}'
+                };
+
+                $.ajax({
+                    url: '/human-resources/employee-management/work-update/' + employeeId,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı',
+                                text: response.message,
+                                confirmButtonText: 'Tamam'
+                            }).then(() => {
+                                $('#editWorkModal').modal('hide');
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata',
+                                text: response.message,
+                                confirmButtonText: 'Tamam'
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata Oluştu',
+                            text: xhr.responseJSON ? xhr.responseJSON.message :
+                                'Bir hata meydana geldi!',
+                            confirmButtonText: 'Tamam'
+                        });
+                    }
+                });
+            });
+
 
 
         });

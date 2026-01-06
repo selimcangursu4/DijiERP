@@ -152,7 +152,7 @@ class PersonnelManagementController extends Controller
         );
     }
     // Personel Ekleme İşlemi
-     public function store(Request $request)
+    public function store(Request $request)
     {
         try {
             // Personeli Veritabanına Kaydet
@@ -223,7 +223,7 @@ class PersonnelManagementController extends Controller
                 "success" => true,
                 "id" => $newEmployee->id,
             ]);
-         } catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             Log::error("Employee Store Error", [
                 "user_id" => auth()->id(),
                 "company_id" => auth()->user()->company_id ?? null,
@@ -245,7 +245,15 @@ class PersonnelManagementController extends Controller
     public function edit($id)
     {
         $companyId = auth()->user()->company_id;
-        $employee = Employees::with("position", "employmentStatus",'city', 'district')
+        $employee = Employees::with(
+            "position",
+            "employmentStatus",
+            "city",
+            "district",
+            'workType',
+           'contractType',
+            'bank'
+           )
             ->where("id", $id)
             ->first();
         $positions = Position::where("company_id", "=", $companyId)->get();
@@ -256,6 +264,9 @@ class PersonnelManagementController extends Controller
         $countries = Country::all();
         $cities = City::all();
         $districts = District::all();
+        $workTypes = WorkType::all();
+        $contractTypes = ContractType::all();
+        $banks = Bank::all();
         return view(
             "human-resources.personnel-management.edit",
             compact(
@@ -267,7 +278,10 @@ class PersonnelManagementController extends Controller
                 "employees",
                 "countries",
                 "cities",
-                "districts"
+                "districts",
+                "workTypes",
+                "contractTypes",
+                "banks"
             )
         );
     }
@@ -298,7 +312,7 @@ class PersonnelManagementController extends Controller
                 "success" => true,
                 "message" => "Profil güncellendi.",
             ]);
-        } catch (\Throwable $th) {
+         } catch (\Throwable $th) {
             Log::error("Profil güncelleme hatası: " . $th->getMessage());
             return response()->json([
                 "success" => false,
@@ -307,7 +321,7 @@ class PersonnelManagementController extends Controller
         }
     }
     // Kişisel Bilgileri Güncelleme İşlemi
-    public function personelUpdate(Request $request, $id)
+     public function personelUpdate(Request $request, $id)
     {
         try {
             $employee = Employees::findOrFail($id);
@@ -336,30 +350,58 @@ class PersonnelManagementController extends Controller
         }
     }
     // İletişim Bilgilerini Güncelle
-  public function contactUpdate(Request $request, $id)
-{
-    try {
+     public function contactUpdate(Request $request, $id)
+    {
+        try {
+            $employee = Employees::findOrFail($id);
+
+            $employee->phone = $request->phone;
+            $employee->email = $request->email;
+            $employee->address = $request->address;
+            $employee->city_id = $request->city_id;
+            $employee->district_id = $request->district_id;
+            $employee->postal_code = $request->postal_code;
+
+            $employee->save();
+
+            return response()->json([
+                "status" => "success",
+                "message" => "İletişim bilgileri başarıyla güncellendi.",
+            ]);
+         } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "status" => "error",
+                    "message" => "Bir hata oluştu: " . $th->getMessage(),
+                ],
+                500
+            );
+         }
+    }
+    // Çalışma ve Maaş Bilgilerini Güncelle
+    public function workUpdate(Request $request, $id)
+    {
+       try {
         $employee = Employees::findOrFail($id);
 
-        $employee->phone = $request->phone;
-        $employee->email = $request->email;
-        $employee->address = $request->address;
-        $employee->city_id = $request->city_id;
-        $employee->district_id = $request->district_id;
-        $employee->postal_code = $request->postal_code;
+        $employee->work_type_id = $request->work_type_id;
+        $employee->contract_type_id = $request->contract_type_id;
+        $employee->salary_amount = $request->salary_amount;
+        $employee->bank_id = $request->bank_id;
+        $employee->iban = $request->iban;
 
         $employee->save();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'İletişim bilgileri başarıyla güncellendi.'
+            'message' => 'Çalışma ve maaş bilgileri başarıyla güncellendi.'
         ]);
-    } catch (\Throwable $th) {
+       } catch (\Throwable $th) {
         return response()->json([
             'status' => 'error',
             'message' => 'Bir hata oluştu: ' . $th->getMessage()
         ], 500);
+       }
     }
-}
 
 }
