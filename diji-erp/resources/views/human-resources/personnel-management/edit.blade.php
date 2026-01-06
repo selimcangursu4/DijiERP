@@ -449,12 +449,10 @@
                             <input type="text" id="postal_code" name="postal_code" class="form-control"
                                 value="{{ $employee->postal_code }}">
                         </div>
-
                     </div>
-
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">İptal</button>
                         <button type="submit" class="btn btn-primary">Kaydet</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
                     </div>
                 </form>
 
