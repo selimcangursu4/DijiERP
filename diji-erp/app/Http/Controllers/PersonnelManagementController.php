@@ -1,9 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Employees;
+use App\Models\Department;
+use App\Models\Position;
+use App\Models\WorkType;
+use App\Models\EmploymentType;
+use App\Models\ContractType;
+
+use App\Models\InsuranceType;
+use App\Models\Bank;
+
+
+
 use Yajra\DataTables\DataTables;
 
 
@@ -60,6 +71,14 @@ class PersonnelManagementController extends Controller
     // Personel Ekleme Sayfası
     public function create()
     {
-        return view('human-resources.personnel-management.create');
+        $companyId = auth()->user()->company_id;
+        $departments = Department::where('company_id',"=",$companyId)->get();
+        $positions = Position::where('company_id',"=",$companyId)->get();
+        $employmentTypes = EmploymentType::all();
+        $workTypes = WorkType::all();
+        $contractTypes = ContractType::all();
+        $insuranceTypes  = InsuranceType::all();
+        $banks = Bank::all();
+        return view('human-resources.personnel-management.create',compact('departments','positions','employmentTypes','employmentTypes','workTypes','contractTypes','banks','insuranceTypes'));
     }
 }
