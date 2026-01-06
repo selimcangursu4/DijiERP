@@ -9,10 +9,13 @@ use App\Models\Position;
 use App\Models\WorkType;
 use App\Models\EmploymentType;
 use App\Models\ContractType;
-
+use App\Models\Country;
+use App\Models\City;
+use App\Models\District;
 use App\Models\InsuranceType;
 use App\Models\Bank;
-
+use App\Models\EducationLevel;
+use App\Models\Profession;
 
 
 use Yajra\DataTables\DataTables;
@@ -79,6 +82,12 @@ class PersonnelManagementController extends Controller
         $contractTypes = ContractType::all();
         $insuranceTypes  = InsuranceType::all();
         $banks = Bank::all();
-        return view('human-resources.personnel-management.create',compact('departments','positions','employmentTypes','employmentTypes','workTypes','contractTypes','banks','insuranceTypes'));
+        $countries = Country::all();
+        $cities = City::all();
+        $districts = District::all();
+        $educationLevels = EducationLevel::all();
+        $professions = Profession::all();
+
+        return view('human-resources.personnel-management.create',compact('departments','positions','employmentTypes','employmentTypes','workTypes','contractTypes','banks','insuranceTypes','countries','cities','districts','educationLevels','professions'));
     }
 }

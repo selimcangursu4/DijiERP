@@ -56,7 +56,9 @@
                             <label for="nationality" class="form-label">Uyruk</label>
                             <select id="nationality" name="nationality" class="form-select">
                                 <option value="">Uyruk Seçiniz...</option>
-                                <option value="1">Türkiye</option>
+                                @foreach($countries as $country)
+                                   <option value="{{$country->id}}">{{$country->baslik}}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-12 mt-4">
@@ -79,14 +81,18 @@
                             <label for="city_id" class="form-label">Şehir Bilgisi</label>
                             <select id="city_id" name="city_id" class="form-select">
                                 <option value="">Şehir Seçiniz...</option>
-                                <option value="1">İstanbul</option>
+                                 @foreach($cities as $city)
+                                   <option value="{{$city->id}}">{{$city->baslik}}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label for="district_id" class="form-label">İlçe Bilgisi</label>
                             <select id="district_id" name="district_id" class="form-select">
                                 <option value="">İlçe Seçiniz...</option>
-                                <option value="1">Ümraniye</option>
+                                 @foreach($districts as $district)
+                                   <option value="{{$district->id}}">{{$district->baslik}}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -105,14 +111,14 @@
                             <label for="education_level_id" class="form-label">Mezuniyet Tipi</label>
                             <select id="education_level_id" name="education_level_id" class="form-select">
                                 <option value="">Mezuniyet Tipi Seçiniz...</option>
+                                @foreach($educationLevels as $educationLevel)
+                                   <option value="{{$educationLevel->id}}">{{$educationLevel->name}}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label for="last_school_id" class="form-label">Mezun Olduğu En Son Okul</label>
-                            <select id="last_school_id" name="last_school_id" class="form-select">
-                                <option value="">Okul Seçiniz...</option>
-                                <option value="1">Marmara Üniversitesi</option>
-                            </select>
+                            <input type="text" id="last_school_id" name="last_school_id" class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label for="graduation_date" class="form-label">Mezuniyet Tarihi</label>
@@ -122,7 +128,9 @@
                             <label for="profession_id" class="form-label">Meslek Bilgisi</label>
                             <select id="profession_id" name="profession_id" class="form-select">
                                 <option value="">Meslek Seçiniz...</option>
-                                <option value="1">Yazılım Mühendisi</option>
+                                @foreach($professions as $profession)
+                                <option value="{{$profession->id}}">{{$profession->name}}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-12 mt-4">

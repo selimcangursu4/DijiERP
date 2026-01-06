@@ -32,7 +32,7 @@
                      <div class="collapse" id="pages">
                          <ul class="sub-menu">
                              <li class="side-nav-item">
-                                 <a href="pages-faq.html" class="side-nav-link">
+                                 <a href="{{route('employee-management.index')}}" class="side-nav-link">
                                      <span class="menu-text" data-lang="pages-faq">Personel Yönetimi</span>
                                  </a>
                              </li>

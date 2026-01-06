@@ -2,7 +2,7 @@
 @section('main')
     <div class="container-fluid">
         <div class="text-end">
-            <button class="btn btn-primary">Yeni Personel Ekle</button>
+            <a href="{{route('employee-management.create')}}" class="btn btn-primary">Yeni Personel Ekle</a>
             <button class="btn btn-danger">Geri Dön</button>
         </div>
         <div class="card mt-2">
