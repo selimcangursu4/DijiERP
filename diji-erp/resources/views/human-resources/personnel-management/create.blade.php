@@ -349,20 +349,33 @@
                         emergency_contact_phone: $('#emergency_contact_phone').val(),
                         emergency_contact_relation: $('#emergency_contact_relation').val()
                     },
-
                     success: function(response) {
                         console.log(response);
-                        alert('Personel başarıyla kaydedildi');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Başarılı!',
+                            text: 'Personel başarıyla kaydedildi',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                     },
-
                     error: function(xhr) {
                         console.log(xhr.responseText);
-                        alert('Bir hata oluştu');
+                        let errorMsg = 'Bir hata oluştu';
+                        try {
+                            let res = JSON.parse(xhr.responseText);
+                            if (res.message) errorMsg = res.message;
+                        } catch (e) {}
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Hata!',
+                            text: errorMsg,
+                            confirmButtonText: 'Tamam'
+                        });
                     }
                 });
-
             });
-
         });
     </script>
 @endsection

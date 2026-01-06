@@ -63,15 +63,17 @@ class Employees extends Model
     {
       return $this->belongsTo(Department::class);
     }
-
     public function position()
     {
-      return $this->belongsTo(Position::class);
+      return $this->belongsTo(Position::class, 'position_id');
     }
-
     public function employmentType()
     {
       return $this->belongsTo(EmploymentType::class);
+    }
+    public function employmentStatus()
+    {
+      return $this->belongsTo(EmploymentStatus::class, 'employment_status_id');
     }
 
 }

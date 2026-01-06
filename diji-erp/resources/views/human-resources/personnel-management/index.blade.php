@@ -6,7 +6,7 @@
             <button class="btn btn-danger">Geri Dön</button>
         </div>
         <div class="card mt-2">
-            <div class="card-header justify-content-between">
+            <div class="card-header bg-light justify-content-between">
                 <h4 class="card-title">Personel Listesi</h4>
             </div>
             <div class="card-body">
@@ -34,18 +34,17 @@ $(function () {
         serverSide: true,
         ajax: "{{ route('employee-management.fetch') }}",
         columns: [
-            { data: 'personel', name: 'personel', orderable: false, searchable: false },
-            { data: 'employee_code', name: 'employee_code' },
-            { data: 'department', name: 'department.name' },
-            { data: 'position', name: 'position.name' },
-            { data: 'employment_type', name: 'employmentType.name' },
-            { data: 'start_date', name: 'start_date' },
-            { data: 'status', name: 'status', orderable: false, searchable: false },
-            { data: 'action', name: 'action', orderable: false, searchable: false }
-        ],
-        language: {
-            url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json"
-        }
+    { data: 'personel', orderable: false, searchable: false },
+    { data: 'employee_code', name: 'employees.employee_code' },
+
+    { data: 'department', orderable: false, searchable: false },
+    { data: 'position', orderable: false, searchable: false },
+    { data: 'employment_type', orderable: false, searchable: false },
+
+    { data: 'start_date', name: 'employees.sgk_start_date' },
+    { data: 'status', orderable: false, searchable: false },
+    { data: 'action', orderable: false, searchable: false }
+]
     });
 });
 </script>

@@ -53,6 +53,7 @@ return new class extends Migration
        $table->string('phone')->unique(); // Telefon
        $table->string('alternative_phone')->nullable(); // Alternatif telefon
        $table->string('email')->nullable(); // Kurumsal e-posta
+       $table->string('profile_photo')->nullable();
 
        $table->string('address'); // Adres
        $table->integer('city_id'); // İl

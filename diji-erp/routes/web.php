@@ -26,6 +26,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('employee-management.fetch');
     Route::post('/human-resources/employee-management/store', [PersonnelManagementController::class, 'store'])
         ->name('employee-management.store');
-
+    Route::get('/human-resources/employee-management/edit/{id}', [PersonnelManagementController::class, 'edit'])
+        ->name('employee-management.edit');
+    Route::post('/human-resources/employee-management/profile-update/{id}', [PersonnelManagementController::class, 'profileUpdate'])
+        ->name('employee-management.profile-update');
     
 });
